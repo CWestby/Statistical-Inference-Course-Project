@@ -1,0 +1,95 @@
+---
+title: "Statistical Inference Course Project Part 2"
+author: "Charles Westby"
+date: "October 22, 2015"
+output: pdf_document
+---
+
+# Synopsis 
+In this report we will be doing analysis on Tooth Growth Data. Using this data we will use confidence intervals and hypothesis testing in order to compare tooth growth by supplement type and dose. 
+
+# Processing Data
+
+### Setting Working Directory
+```{r}
+setwd("~/GitHub/Statistical-Inference-Course-Project")
+```
+
+### Opening Packages to Be Used
+```{r}
+library(ggplot2)
+library(datasets)
+library(gridExtra)
+```
+
+### Loading Data Set
+```{r}
+data("ToothGrowth")
+```
+
+### Heading Tooth Growth Data
+```{r}
+head(ToothGrowth)
+```
+
+### Summary Tooth Growth Data
+```{r}
+summary(ToothGrowth)
+```
+
+```{r}
+summary(ToothGrowth$supp)
+summary(ToothGrowth$dose)
+```
+
+### Assigning Variables
+```{r}
+dose          <-    ToothGrowth$dose
+supplement    <-    ToothGrowth$supp
+length        <-    ToothGrowth$len
+```
+# Summary
+
+### Plotting The Data for ToothGrowth
+```{r}
+ggplot(ToothGrowth, aes(dose, length, fill=supplement)) + geom_histogram(stat="identity") +  facet_grid(. ~ supp) + labs(x = "Dose in Milligrams", y = "Tooth Length", title= "Tooth Length for Doses of Each Supplement")
+```
+
+### Hypothesis Test and Confidence Interval
+
+#### Confidence Interval
+```{r}
+fit             <-  lm(length ~ dose + supplement, ToothGrowth)
+confint(fit)
+```
+
+#### T-Test Supplement
+```{r}
+t.test(length ~ supplement, ToothGrowth)
+```
+
+#### T-Test Doses
+```{r}
+ToothGrowth0.5 <- subset (ToothGrowth, dose %in% c(0.5, 1.0)) 
+ToothGrowth1.0 <- subset (ToothGrowth, dose %in% c(0.5, 2.0)) 
+ToothGrowth2.0 <- subset (ToothGrowth, dose %in% c(1.0, 2.0)) 
+```
+  
+##### T-Test Dose=0.5
+```{r}
+t.test(len ~ dose, ToothGrowth0.5)
+```
+  
+##### T-Test Dose=1.0
+```{r}
+t.test(len ~ dose, ToothGrowth1.0)
+```
+  
+##### T-Test Dose=2.0
+```{r}
+t.test(len ~ dose, ToothGrowth2.0)
+```
+  
+# Conclusion
+
+When we do the T-Test for the supplements, we see that the p-value is 0.0603 and the confidence interval contains a zero. Therefore, we cannot reject the null hypothesis, that the different supplement types have no effect on tooth length. This means that the different supplement types, Orange Juice and Vitamin C, have similar effect on tooth length. We also see from the graphs that different doses have different effects on tooth length. When we increase the doses of both Vitamin C and Orange Juice, we see an increase in tooth length on the test subjects. This conclusion is also show via the T-Tests done on each individual dose. The p-values are less than 0.05 and the confidence intervals do not contain 0. Therefore we can reject the null hypothesis and conclude that increasing the doses causes an increase in tooth length.
